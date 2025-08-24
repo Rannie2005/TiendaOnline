@@ -4,10 +4,12 @@
 {% block title %}Contacto{% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow p-4" style="max-width: 600px; width: 100%; background-color: rgba(0,0,0,0.75); border-radius: 15px;">
+<div class="contact-container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow p-4 contact-card">
         <h3 class="text-white text-center mb-4">Contáctanos</h3>
-        <p class="text-white-50 text-center mb-4">Escríbenos tu correo, el tema y tu mensaje. Te Serviremos Soporte Inmediatamente.</p>
+        <p class="text-white-50 text-center mb-4">
+            Escríbenos tu correo, el tema y tu mensaje. Te serviremos soporte inmediatamente.
+        </p>
 
         {% if messages %}
             {% for message in messages %}
@@ -39,4 +41,39 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Fondo de la página */
+.contact-container {
+    background-image: url("{% static 'imagen8.jpeg' %}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Estilo de la tarjeta */
+.contact-card {
+    max-width: 600px;
+    width: 100%;
+    background-color: rgba(0,0,0,0.75);
+    border-radius: 15px;
+}
+
+/* Inputs y textarea */
+.contact-card form div input,
+.contact-card form div textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+}
+
+/* Labels */
+.contact-card label {
+    font-weight: 500;
+}
+</style>
 {% endblock %}
