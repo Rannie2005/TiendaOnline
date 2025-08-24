@@ -41,8 +41,8 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Inicio</a></li>
                 <li class="nav-item"><a class="nav-link {% if request.path == '/servicio/' %}active{% endif %}" href="{% url 'servicio' %}">Servicios</a></li>
-                <li class="nav-item"><a class="nav-link {% if request.path == '/tienda/' %}active{% endif %}" href="{% url 'tienda' %}">Tienda</a></li>
-                <li class="nav-item"><a class="nav-link {% if request.path == '/blog/' %}active{% endif %}" href="{% url 'blog' %}">Blog</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.path|slice:'8:' == '/tienda/' %}active{% endif %}" href="{% url 'tienda' %}">Tienda</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.path|slice:'6:' == '/blog/' %}active{% endif %}" href="{% url 'blog' %}">Blog</a></li>
                 <li class="nav-item"><a class="nav-link {% if request.path == '/contacto/' %}active{% endif %}" href="{% url 'contacto' %}">Contacto</a></li>
                 {% if request.user.is_authenticated %}
                     

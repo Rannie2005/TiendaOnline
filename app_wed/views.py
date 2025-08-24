@@ -4,7 +4,10 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
 import random
-from .models import Servicio, Categoria, Post
+from .models import Servicio, Categoria, Post, Usuario
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from .forms import UsuarioForm
 
 # Create your views here.
 
@@ -42,6 +45,25 @@ def categoria(request, categoria_id):
 
 
 def contacto(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+
+        if email and subject and message:
+            try:
+                send_mail(
+                    subject=f"[Contacto] {subject}",
+                    message=f"De: {email}\n\n{message}",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.DEFAULT_FROM_EMAIL],  
+                )
+                messages.success(request, "¡Mensaje enviado correctamente!")
+                return redirect('contacto')
+            except Exception as e:
+                messages.error(request, f"Ocurrió un error al enviar el mensaje: {e}")
+        else:
+            messages.error(request, "Por favor completa todos los campos.")
 
     return render(request, 'contacto.html')
 
@@ -107,10 +129,6 @@ def carrito(request):
 
 
 
-def perfil(request):
-    return render(request, 'perfil.html')
-
-
 def logout(request):
     
     lo(request)
@@ -142,8 +160,27 @@ def verificar_codigo(request):
     return render(request, 'verificar_codigo.html')
 
 
-def editar(request):
-    return render(request, 'editar_perfil.html')
+@login_required
+def perfil(request):
+    usuario, created = Usuario.objects.get_or_create(
+    user=request.user,
+    defaults={
+        'nombre': request.user.first_name or '',
+        'apellido': request.user.last_name or '',
+        'cedula': 0,  # temporalmente para evitar el error
+        'telefono': '',
+    }
+)
+    return render(request, 'perfil.html', {'usuario': usuario})
 
-def recuperar_passw(request):
-    return render(request, 'recuperar.html')
+@login_required
+def editar_perfil(request):
+    usuario, created = Usuario.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, request.FILES, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('perfil')
+    else:
+        form = UsuarioForm(instance=usuario)
+    return render(request, 'editar_perfil.html', {'form': form})

@@ -1,8 +1,69 @@
 {% extends 'base.html' %}
 {% load static %}
-
-{% block title %}Servicios{% endblock %}
+{% load widget_tweaks %}
+{% block title %}Editar Perfil{% endblock %}
 
 {% block content %}
-    Editar
+<div class="container d-flex justify-content-center align-items-center min-vh-75">
+    <div class="card shadow p-5" style="max-width: 600px; width: 100%; background-color: rgba(0,0,0,0.75); border-radius: 15px;">
+        <h3 class="text-center mb-4 text-white">Editar perfil</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Foto actual -->
+            <div class="text-center mb-4">
+                {% if form.instance.foto %}
+                    <img src="{{ form.instance.foto.url }}" class="rounded-circle mb-3" style="width:120px; height:120px; object-fit:cover; border:3px solid #fff;">
+                {% endif %}
+            </div>
+
+            <!-- Campo de subir foto -->
+            <div class="mb-4 text-white">
+                {{ form.foto.label_tag }}
+                {{ form.foto|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3 text-white">
+                {{ form.nombre.label_tag }} 
+                {{ form.nombre|add_class:"form-control" }}
+            </div>
+            <div class="mb-3 text-white">
+                {{ form.apellido.label_tag }} 
+                {{ form.apellido|add_class:"form-control" }}
+            </div>
+            <div class="mb-3 text-white">
+                {{ form.cedula.label_tag }} 
+                {{ form.cedula|add_class:"form-control" }}
+            </div>
+            <div class="mb-3 text-white">
+                {{ form.telefono.label_tag }} 
+                {{ form.telefono|add_class:"form-control" }}
+            </div>
+            <div class="mb-3 text-white">
+                {{ form.direccion.label_tag }} 
+                {{ form.direccion|add_class:"form-control" }}
+            </div>
+
+            <!-- Mapa visual temporal -->
+            <label class="text-white mb-2">Ubicación aproximada</label>
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.019237432045!2d-122.08424908468126!3d37.4220657798257!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fb24c0dc4a0f9%3A0x7c4f3fdf6c1d24a9!2sGoogleplex!5e0!3m2!1ses!2s!4v1234567890"
+                width="100%" height="300" style="border:0; border-radius:8px; margin-bottom:20px;" allowfullscreen="" loading="lazy"></iframe>
+
+            <button type="submit" class="btn btn-light w-100 mt-3">Guardar cambios</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    iframe {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: 500;
+    }
+</style>
 {% endblock %}
