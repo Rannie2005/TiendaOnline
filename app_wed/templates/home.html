@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        background-image: url("{% static 'imagen1.jpeg' %}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white; /* Cambiar el color del texto si es necesario */
+    }
+
+    .transparent-bg {
+        background-color: rgba(255, 255, 255, 0.8); /* Blanco con 80% de opacidad */
+        border-radius: 10px;
+        padding: 2rem;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+</style>
+
+<!-- Sección de bienvenida -->
+<header class="text-dark text-center py-5">
+    <div class="container transparent-bg">
+        <h1 class="display-4">Bienvenido a R-MARKET</h1>
+        <p class="lead">Tienda Online Con Los Mejores Servicios</p>
+        <a href="javascript:void(0);" id="btnExplorar" class="btn btn-dark btn-lg mt-3">Explorar</a>
+    </div>
+</header>
+
+<!-- Sección de características -->
+<section class="py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">¿Qué ofrecemos?</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm">
+                    <h5 class="card-title">Venta</h5>
+                    <p class="card-text">Tienda online de ropa, calzados y accesorios para todos los estilos. Calidad, variedad y precios increíbles.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm">
+                    <h5 class="card-title">Envios</h5>
+                    <p class="card-text">¿Estás en cualquier parte de Republica Dominicana? ¡Nosotros llegamos hasta ti! Envíos seguros a todo el país.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm">
+                    <h5 class="card-title">Soporte</h5>
+                    <p class="card-text">¿Necesitas ayuda? Nuestro equipo de soporte está disponible para asistirte antes, durante y después de tu compra.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.getElementById('btnExplorar').addEventListener('click', function() {
+    //scroll 
+    window.scrollBy({ top: 300, behavior: 'smooth' });
+    });
+</script>
+
+{% endblock %}

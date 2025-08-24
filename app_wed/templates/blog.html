@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        background-image: url("{% static 'imagen1.jpeg' %}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .transparent-bg {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 2rem;
+    }
+</style>
+
+<!-- Sección Blog -->
+<section class="py-5">
+    <div class="container transparent-bg">
+        <h1 class="text-center mb-5">Nuestro Blog</h1>
+        <div class="row">
+            {% for p in post %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        {% if p.imagen %}
+                            <img src="{{ p.imagen.url }}" class="card-img-top rounded-top" alt="{{ p.titulo }}">
+                        {% else %}
+                            <img src="{% static 'default_blog.jpg' %}" class="card-img-top rounded-top" alt="Imagen no disponible">
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ p.titulo }}</h5>
+
+                            <!-- Mostrar categorías -->
+                            <p class="mb-2">
+                                {% for cat in p.categoria.all %}
+                                    <span class="badge bg-dark">{{ cat.nombre }}</span>
+                                {% endfor %}
+                            </p>
+
+                            <p class="card-text text-muted">{{ p.contenido|truncatechars:120 }}</p>
+                            <div class="mt-auto">
+                                <p class="small mb-1">
+                                    <i class="bi bi-person-circle"></i> {{ p.autor.username }} 
+                                </p>
+                                <p class="small text-muted">
+                                    <i class="bi bi-calendar-event"></i> {{ p.created|date:"d/m/Y" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center">
+                    <p class="lead">Aún no hay publicaciones en el blog.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div style="width: 70%; margin: auto; text-align: center;">
+    <h4>Categorías</h4>
+    {% for c in categoria %}
+        <a href="{% url 'categoria' c.id %}" class="badge bg-secondary text-decoration-none">
+            {{ c.nombre }}
+        </a>
+    {% empty %}
+        <p>No hay categorías disponibles.</p>
+    {% endfor %}
+</div>
+{% endblock %}

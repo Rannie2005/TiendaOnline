@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}LOGIN{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url("{% static 'imagen3.webp' %}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+    }
+
+    .login-card {
+        background-color: rgba(0, 0, 0, 0.75); /* gris oscuro translúcido */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        backdrop-filter: blur(6px);
+        color: #fff;
+    }
+
+    .form-label,
+    .form-check-label,
+    .form-text {
+        color: #ffffffd9;
+    }
+
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.95);
+        border: none;
+        color: #000;
+    }
+
+    .form-control::placeholder {
+        color: #555;
+    }
+
+    .form-control:focus {
+        background-color: rgba(255, 255, 255, 1);
+        box-shadow: none;
+        border: 1px solid #ccc;
+        color: #000;
+    }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow p-4 login-card" style="width: 100%; max-width: 400px;">
+        <!-- LOGO Y NOMBRE DE LA EMPRESA EN FILA -->
+        <div class="d-flex align-items-center justify-content-center mb-4">
+            <img src="{% static 'imagen5.jpeg' %}" alt="Logo de la empresa" style="width: 50px; height: 50px; margin-right: 10px;">
+            <h4 class="mb-0 text-white">R-MARKET</h4>
+        </div>
+
+        <h5 class="text-center mb-4 text-white">Iniciar Sesión</h5>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="correo" class="form-label">Correo electrónico</label>
+        <input type="email" class="form-control" id="correo" name="correo" placeholder="usuario@ejemplo.com" required>
+        <div id="emailHelp" class="form-text">Nunca compartiremos tu correo con nadie más.</div>
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Contraseña</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+    </div>
+
+    <div class="mb-3 form-check mt-5">
+        <input type="checkbox" class="form-check-input" id="recordarme" name="recordarme">
+        <label class="form-check-label" for="recordarme">Recordarme</label>
+    </div>
+
+    <button type="submit" class="btn btn-light w-100">Entrar</button>
+</form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        .nav-link i {
+        font-size: 1.2rem;
+        color: white;
+        }
+        .nav-link:hover i {
+            color: #ccc;
+        }
+
+        
+    </style>
+
+
+
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+            <img src="{% static 'imagen5.jpeg' %}" alt="Logo" width="50" height="50" class="me-2">
+            R-MARKET
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.path == '/servicio/' %}active{% endif %}" href="{% url 'servicio' %}">Servicios</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.path == '/tienda/' %}active{% endif %}" href="{% url 'tienda' %}">Tienda</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.path == '/blog/' %}active{% endif %}" href="{% url 'blog' %}">Blog</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.path == '/contacto/' %}active{% endif %}" href="{% url 'contacto' %}">Contacto</a></li>
+                {% if request.user.is_authenticated %}
+                    
+
+                    <!-- Menú usuario -->
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Mi Cuenta
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'perfil' %}">Mi perfil</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Carrito visible solo si está logueado -->
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" href="{% url 'carrito' %}">
+                            <i class="bi bi-cart"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <!-- Login si no está logueado -->
+                    <li class="nav-item"><a class="nav-link {% if request.path == '/registro/' %}active{% endif %}" href="{% url 'registro' %}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- CONTENIDO -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-dark text-white text-center py-4 mt-5">
+    <p class="mb-0">&copy; 2025 R-MARKET. Todos los derechos reservados.</p>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

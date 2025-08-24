@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Servicios{% endblock %}
+
+{% block content %}
+<style>
+  /* Opcional: efectos suaves para las imágenes */
+    .service-img {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .service-img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+    }
+
+  /* Para que el texto quede centrado verticalmente */
+    .service-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    }
+</style>
+
+<div class="container my-5">
+{% for servicio in servicios %}
+    <section class="mb-5 p-4 rounded shadow-sm bg-white border">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <img src="{{ servicio.imagen.url }}" 
+                alt="{{ servicio.titulo }}" 
+                class="img-fluid rounded service-img shadow-sm w-100" />
+            </div>
+        <div class="col-md-6 service-text text-center text-md-start">
+        <h5 class="text-uppercase text-secondary fw-bold mb-2">R-MARKET</h5>
+        <h2 class="text-primary fw-bold mb-3">{{ servicio.titulo }}</h2>
+        <p class="text-muted fs-5">{{ servicio.contenido }}</p>
+        </div>
+    </div>
+    </section>
+    {% empty %}
+        <p class="text-center text-muted fs-5">No hay servicios disponibles.</p>
+{% endfor %}
+</div>
+{% endblock %}
