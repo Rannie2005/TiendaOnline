@@ -144,3 +144,6 @@ def verificar_codigo(request):
 
 def editar(request):
     return render(request, 'editar_perfil.html')
+
+def recuperar_passw(request):
+    return render(request, 'recuperar.html')
