@@ -59,3 +59,84 @@ class Usuario(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.nombre} {self.apellido}"
+
+
+
+class Categoria_articulo(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Articulo(models.Model):
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True, null=True)
+    categorias = models.ManyToManyField(Categoria_articulo, related_name="articulos")
+    imagen_principal = models.ImageField(upload_to="articulos/", blank=True, null=True)
+    creado = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.nombre
+
+    # 👇 Métodos útiles para mostrar rangos de precios
+    def precio_minimo(self):
+        return self.variantes.aggregate(models.Min("precio"))["precio__min"]
+
+    def precio_maximo(self):
+        return self.variantes.aggregate(models.Max("precio"))["precio__max"]
+
+
+class ArticuloVariante(models.Model):
+    TALLAS = [
+        ("XS", "XS"),
+        ("S", "S"),
+        ("M", "M"),
+        ("L", "L"),
+        ("XL", "XL"),
+        ("XXL", "XXL"),
+        ("UNICA", "Talla Única"),
+    ]
+
+    articulo = models.ForeignKey(Articulo, related_name="variantes", on_delete=models.CASCADE)
+    color = models.CharField(max_length=30)
+    talla = models.CharField(max_length=10, choices=TALLAS)
+    cantidad = models.PositiveIntegerField(default=0)
+    precio = models.DecimalField(max_digits=8, decimal_places=2)
+    imagen = models.ImageField(upload_to="articulos/variantes/", blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.articulo.nombre} - {self.color} - {self.talla}"
+
+    # 🚨 Alerta de stock bajo
+    def stock_alerta(self):
+        if self.cantidad == 0:
+            return "❌ Agotado"
+        elif self.cantidad < 10:
+            return f"⚠️ Casi agotado: quedan {self.cantidad}"
+        return ""
+
+
+class Carrito(models.Model):
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Carrito de {self.usuario.nombre}"
+
+    def total(self):
+        return sum(item.subtotal() for item in self.items.all())
+
+
+class CarritoItem(models.Model):
+    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE, related_name="items")
+    articulo = models.ForeignKey(ArticuloVariante, on_delete=models.CASCADE)  # ✅ apunta a variante
+    cantidad = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        unique_together = ('carrito', 'articulo')
+
+    def subtotal(self):
+        return self.cantidad * self.articulo.precio
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.articulo}"

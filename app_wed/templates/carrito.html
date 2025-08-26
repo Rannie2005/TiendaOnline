@@ -1,8 +1,67 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Servicios{% endblock %}
+{% block title %}Mi Carrito{% endblock %}
 
 {% block content %}
-    Carrito
+<div class="container mt-5">
+    <h2 class="mb-4">🛒 Mi Carrito</h2>
+
+    {% if items %}
+    <table class="table table-bordered text-center align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Artículo</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td class="text-start">
+                    <!-- Imagen pequeña de la variante -->
+                    {% if item.articulo.imagen %}
+                        <img src="{{ item.articulo.imagen.url }}" alt="{{ item.articulo.articulo.nombre }}" class="me-2" style="width:50px; height:50px; object-fit:cover; border-radius:5px;">
+                    {% else %}
+                        <img src="{% static 'default.jpg' %}" alt="{{ item.articulo.articulo.nombre }}" class="me-2" style="width:50px; height:50px; object-fit:cover; border-radius:5px;">
+                    {% endif %}
+                    {{ item.articulo.articulo.nombre }} <br>
+                    <small>{{ item.articulo.color }} - {{ item.articulo.talla }}</small>
+                </td>
+                <td>{{ item.cantidad }}</td>
+                <td>RD$ {{ item.articulo.precio }}</td>
+                <td>RD$ {{ item.subtotal }}</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'aumentar_cantidad' item.id %}" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-plus-lg"></i>
+                        </a>
+                        <a href="{% url 'reducir_cantidad' item.id %}" class="btn btn-sm btn-outline-warning">
+                            <i class="bi bi-dash-lg"></i>
+                        </a>
+                        <a href="{% url 'confirmar_eliminar' item.id %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash3"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr class="fw-bold">
+                <td colspan="3">Total</td>
+                <td colspan="2">RD$ {{ total }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="text-end mt-3">
+        <button class="btn btn-primary btn-lg">💳 Pagar</button>
+    </div>
+    
+    {% else %}
+        <p class="text-center">Tu carrito está vacío 🛍️</p>
+    {% endif %}
+</div>
 {% endblock %}

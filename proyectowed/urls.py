@@ -33,9 +33,16 @@ urlpatterns = [
     path('registro/', views.registro, name='registro'),
     path('perfil/', views.perfil, name='perfil'),
     path('logout/', views.logout, name='logout'),
-    path('carrito/', views.carrito, name='carrito'),
+    path('carrito/', views.carrito_view, name='carrito'),
     path('verificacion/', views.verificar_codigo, name='verificar_codigo'),
     path('editar/', views.editar_perfil, name='editar_perfil'),
+    path('tienda/<int:articulo_id>/', views.detalle_articulo, name='detalle_articulo'),
+    path('carrito/agregar/', views.agregar_al_carrito, name='agregar_al_carrito'),
+    path('carrito/aumentar/<int:item_id>/', views.aumentar_cantidad, name='aumentar_cantidad'),
+    path('carrito/reducir/<int:item_id>/', views.reducir_cantidad, name='reducir_cantidad'),
+    path('carrito/eliminar/<int:item_id>/', views.confirmar_eliminar, name='confirmar_eliminar'),
+    
+
 
     path(
         "password_reset/",

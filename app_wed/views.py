@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
 import random
-from .models import Servicio, Categoria, Post, Usuario
+from django.db.models import Q, Min, Max
+from .models import Articulo, ArticuloVariante, Carrito, CarritoItem, Usuario, Categoria_articulo, Servicio, Categoria, Post
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from .forms import UsuarioForm
@@ -19,11 +20,6 @@ def home(request):
 def servicio(request):
     servicios = Servicio.objects.all()  # Obtiene todos los servicios
     return render(request, 'servicio.html', {'servicios': servicios})
-
-def tienda(request):
-    servicios = Servicio.objects.all()
-
-    return render(request, 'tienda.html', {'servicios': servicios})
 
 
 
@@ -124,11 +120,6 @@ def registro(request):
 
 
 
-def carrito(request):
-    return render(request, 'carrito.html')
-
-
-
 def logout(request):
     
     lo(request)
@@ -184,3 +175,99 @@ def editar_perfil(request):
     else:
         form = UsuarioForm(instance=usuario)
     return render(request, 'editar_perfil.html', {'form': form})
+
+
+
+def tienda(request):
+    articulos = Articulo.objects.all()
+    query = request.GET.get("q")
+    if query:
+        articulos = articulos.filter(nombre__icontains=query)
+    categoria = request.GET.get("categoria")
+    if categoria:
+        articulos = articulos.filter(categorias__nombre=categoria)
+    
+    context = {
+        "articulos": articulos,
+        "categorias": Categoria_articulo.objects.all(),
+    }
+    return render(request, "tienda.html", context)
+
+
+
+def detalle_articulo(request, articulo_id):
+    # Obtengo el artículo actual
+    articulo = get_object_or_404(Articulo, id=articulo_id)
+
+    # Busco artículos similares (que compartan al menos una categoría, excluyendo el actual)
+    articulos_similares = Articulo.objects.filter(
+        categorias__in=articulo.categorias.all()
+    ).exclude(id=articulo.id).distinct()[:4]  # máximo 4
+
+    return render(request, 'detalle_articulo.html', {
+        'articulo': articulo,
+        'articulos_similares': articulos_similares
+    })
+
+
+
+# ➕ Agregar variante al carrito
+@login_required
+def agregar_al_carrito(request):
+    if request.method == "POST":
+        variante_id = request.POST.get("variante_id")
+        usuario = get_object_or_404(Usuario, user=request.user)
+        carrito, created = Carrito.objects.get_or_create(usuario=usuario)
+        variante = get_object_or_404(ArticuloVariante, id=variante_id)
+
+        item, created = CarritoItem.objects.get_or_create(
+            carrito=carrito,
+            articulo=variante,
+        )
+        if not created:
+            item.cantidad += 1
+            item.save()
+    return redirect("carrito")
+# 🛒 Vista del carrito
+@login_required
+def carrito_view(request):
+    usuario, created = Usuario.objects.get_or_create(user=request.user)
+    carrito, created = Carrito.objects.get_or_create(usuario=usuario)
+
+    context = {
+        "carrito": carrito,
+        "items": carrito.items.all(),
+        "total": carrito.total(),
+    }
+    return render(request, "carrito.html", context)
+
+
+@login_required
+def aumentar_cantidad(request, item_id):
+    item = get_object_or_404(CarritoItem, id=item_id)
+    if item.articulo.cantidad > item.cantidad:  # Verifica stock
+        item.cantidad += 1
+        item.save()
+    return redirect('carrito')
+
+
+@login_required
+def reducir_cantidad(request, item_id):
+    item = get_object_or_404(CarritoItem, id=item_id)
+    if item.cantidad > 1:
+        item.cantidad -= 1
+        item.save()
+    else:
+        item.delete()
+    return redirect('carrito')
+
+
+@login_required
+def confirmar_eliminar(request, item_id):
+    item = get_object_or_404(CarritoItem, id=item_id)
+
+    if request.method == "POST":
+        item.delete()
+        return redirect('carrito')
+
+    return render(request, 'confirmar_eliminar.html', {'item': item})

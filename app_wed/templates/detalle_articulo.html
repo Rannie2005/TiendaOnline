@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ articulo.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row g-4">
+        <!-- Imagen principal -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                {% if articulo.imagen_principal %}
+                    <img id="imagen-principal" src="{{ articulo.imagen_principal.url }}" class="card-img-top rounded" alt="{{ articulo.nombre }}">
+                {% else %}
+                    <img id="imagen-principal" src="{% static 'default.jpg' %}" class="card-img-top rounded" alt="{{ articulo.nombre }}">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Información del artículo -->
+        <div class="col-md-6">
+            <h2 class="fw-bold">{{ articulo.nombre }}</h2>
+            <p class="text-muted">{{ articulo.descripcion }}</p>
+            <h4 class="text-dark mb-3">
+                RD$ {{ articulo.precio_minimo }} - {{ articulo.precio_maximo }}
+            </h4>
+
+            <!-- Formulario de selección de variante -->
+            <form method="post" action="{% url 'agregar_al_carrito' %}" class="mb-4">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="variante" class="form-label">Elige color y talla:</label>
+                    <select name="variante_id" id="variante" class="form-select">
+                        {% for variante in articulo.variantes.all %}
+                            {% if variante.cantidad > 0 %}
+                                <option value="{{ variante.id }}" data-imagen="{% if variante.imagen %}{{ variante.imagen.url }}{% else %}{{ articulo.imagen_principal.url }}{% endif %}">
+                                    {{ variante.color }} - {{ variante.talla }}
+                                    {% if variante.cantidad < 10 %}(Solo {{ variante.cantidad }} disponibles){% endif %}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-dark btn-lg w-100">🛒 Añadir al carrito</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Artículos similares -->
+    <hr class="my-5">
+    <h3 class="mb-4 text-center">Artículos Similares</h3>
+    <div class="row row-cols-2 row-cols-md-4 g-4">
+        {% for similar in articulos_similares %}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    {% if similar.imagen_principal %}
+                        <img src="{{ similar.imagen_principal.url }}" class="card-img-top rounded" alt="{{ similar.nombre }}">
+                    {% else %}
+                        <img src="{% static 'default.jpg' %}" class="card-img-top rounded" alt="{{ similar.nombre }}">
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <h6 class="card-title fw-bold">{{ similar.nombre }}</h6>
+                        <p class="text-muted mb-2">
+                            RD$ {{ similar.precio_minimo }} - {{ similar.precio_maximo }}
+                        </p>
+                        <a href="{% url 'detalle_articulo' similar.id %}" class="btn btn-outline-dark btn-sm w-100">
+                            Ver detalles
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center">No hay artículos similares disponibles.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- JS para cambiar imagen según variante -->
+<script>
+    const selectorVariante = document.getElementById('variante');
+    const imagenPrincipal = document.getElementById('imagen-principal');
+
+    selectorVariante.addEventListener('change', function() {
+        const imagenVariante = this.selectedOptions[0].dataset.imagen;
+        imagenPrincipal.src = imagenVariante;
+    });
+</script>
+{% endblock %}

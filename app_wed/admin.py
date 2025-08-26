@@ -1,16 +1,56 @@
 from django.contrib import admin
-from app_wed.models import Servicio, Categoria, Post
+from app_wed.models import (
+    Servicio, Categoria, Post, 
+    CarritoItem, Carrito, 
+    Articulo, ArticuloVariante, Categoria_articulo
+)
 
-# Register your models here.
-class Servicioadmin(admin.ModelAdmin):
+# Servicio
+class ServicioAdmin(admin.ModelAdmin):
     readonly_fields = ('created', 'updated')
 
-class Categoriaadmin(admin.ModelAdmin):
+# Categoría (BLOG)
+class CategoriaAdmin(admin.ModelAdmin):
     readonly_fields = ('created', 'updated')
 
-class Postadmin(admin.ModelAdmin):
+# Post
+class PostAdmin(admin.ModelAdmin):
     readonly_fields = ('created', 'updated')
 
-admin.site.register(Servicio, Servicioadmin)
-admin.site.register(Categoria, Categoriaadmin)
-admin.site.register(Post, Postadmin)
+# Categoría de Artículos (TIENDA)
+class CategoriaArticuloAdmin(admin.ModelAdmin):
+    list_display = ('nombre',)
+    search_fields = ('nombre',)
+
+# Artículo
+class ArticuloAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'creado')
+    search_fields = ('nombre',)
+    list_filter = ('categorias',)
+
+# Variantes de artículo
+class ArticuloVarianteAdmin(admin.ModelAdmin):
+    list_display = ('articulo', 'color', 'talla', 'precio', 'cantidad')
+    search_fields = ('articulo__nombre', 'color')
+    list_filter = ('color', 'talla')
+
+# Carrito
+class CarritoAdmin(admin.ModelAdmin):
+    list_display = ('usuario',)
+    search_fields = ('usuario__user__username',)
+
+# CarritoItem
+class CarritoItemAdmin(admin.ModelAdmin):
+    list_display = ('carrito', 'articulo', 'cantidad', 'subtotal')
+    search_fields = ('articulo__articulo__nombre',)
+
+
+# Registro en el panel de administración
+admin.site.register(Servicio, ServicioAdmin)
+admin.site.register(Categoria, CategoriaAdmin)  # BLOG
+admin.site.register(Post, PostAdmin)            # BLOG
+admin.site.register(Categoria_articulo, CategoriaArticuloAdmin)  # ✅ TIENDA
+admin.site.register(Articulo, ArticuloAdmin)
+admin.site.register(ArticuloVariante, ArticuloVarianteAdmin)
+admin.site.register(Carrito, CarritoAdmin)
+admin.site.register(CarritoItem, CarritoItemAdmin)
