@@ -57,11 +57,16 @@
     </table>
 
     <div class="text-end mt-3">
-        <button class="btn btn-primary btn-lg">💳 Pagar</button>
+        <a href="{% url 'pagar_carrito' %}" class="btn btn-dark btn-lg">
+            💳 Pagar
+        </a>
     </div>
     
-    {% else %}
-        <p class="text-center">Tu carrito está vacío 🛍️</p>
-    {% endif %}
+{% else %}
+    <div class="text-center">
+        <i class="bi bi-cart-x fs-1 text-muted"></i>
+        <p class="mt-2">Tu carrito está vacío</p>
+    </div>
+{% endif %}
 </div>
 {% endblock %}

@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
 import random
+import stripe
 from django.db.models import Q, Min, Max
-from .models import Articulo, ArticuloVariante, Carrito, CarritoItem, Usuario, Categoria_articulo, Servicio, Categoria, Post
+from .models import Articulo, ArticuloVariante, Carrito, CarritoItem, Usuario, Categoria_articulo, Servicio, Categoria, Post, Pedido, PedidoItem
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from .forms import UsuarioForm
@@ -271,3 +272,83 @@ def confirmar_eliminar(request, item_id):
         return redirect('carrito')
 
     return render(request, 'confirmar_eliminar.html', {'item': item})
+
+
+@login_required
+def mis_pedidos(request):
+    # Obtener el usuario relacionado
+    usuario = request.user.usuario  # asumiendo que Usuario tiene OneToOne con User
+
+    # Obtener los pedidos del usuario, ordenados por fecha descendente
+    pedidos = Pedido.objects.filter(usuario=usuario).order_by('-fecha')
+
+    context = {
+        'pedidos': pedidos
+    }
+    return render(request, 'mis_pedidos.html', context)
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+@login_required
+def pago_exitoso(request):
+    usuario = request.user.usuario
+    carrito = Carrito.objects.get(usuario=usuario)
+    items = carrito.items.all()
+
+    # Crear Pedido
+    pedido = Pedido.objects.create(usuario=usuario, total=carrito.total(), estado='pagado')
+
+    # Crear PedidoItems y reducir stock
+    for item in items:
+        PedidoItem.objects.create(
+            pedido=pedido,
+            articulo=item.articulo,
+            cantidad=item.cantidad,
+            precio=item.articulo.precio
+        )
+        item.articulo.cantidad -= item.cantidad
+        item.articulo.save()
+
+    # Vaciar carrito
+    items.delete()
+
+    # 👉 ahora pasamos pedido al contexto
+    return render(request, 'pago_exitoso.html', {'pedido': pedido})
+
+
+@login_required
+def pago_fallido(request):
+    return render(request, 'pago_fallido.html')
+
+
+@login_required
+def pagar_carrito(request):
+    import stripe
+    from django.conf import settings
+
+    usuario = request.user.usuario
+    carrito = Carrito.objects.get(usuario=usuario)
+    items = carrito.items.all()
+
+    if not items:
+        return redirect('carrito')
+
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    total = int(carrito.total() * 100)
+
+    intent = stripe.PaymentIntent.create(
+        amount=total,
+        currency='usd',
+        metadata={'usuario_id': usuario.id}
+    )
+
+    context = {
+        'client_secret': intent.client_secret,
+        'stripe_public_key': settings.STRIPE_PUBLIC_KEY,
+        'carrito': carrito,
+        'total': carrito.total(),
+        'items': items
+    }
+
+    return render(request, 'pago.html', context)

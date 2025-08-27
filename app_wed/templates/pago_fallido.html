@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Pago Fallido{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2 class="text-danger mb-4">❌ Pago fallido</h2>
+    <p>Hubo un problema procesando tu pago. Intenta nuevamente.</p>
+    <a href="{% url 'carrito' %}" class="btn btn-dark btn-lg">Volver al carrito</a>
+</div>
+{% endblock %}

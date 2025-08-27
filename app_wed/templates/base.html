@@ -41,7 +41,20 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Inicio</a></li>
                 <li class="nav-item"><a class="nav-link {% if request.path == '/servicio/' %}active{% endif %}" href="{% url 'servicio' %}">Servicios</a></li>
-                <li class="nav-item"><a class="nav-link {% if request.path|slice:'8:' == '/tienda/' %}active{% endif %}" href="{% url 'tienda' %}">Tienda</a></li>
+                {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Tienda
+                        </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'tienda' %}">Tienda</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'mis_pedidos' %}">Mi Pedido</a></li>
+                            </ul>
+                
+                </li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link {% if request.path|slice:'6:' == '/blog/' %}active{% endif %}" href="{% url 'tienda' %}">Tienda</a></li>
+                {% endif %}
                 <li class="nav-item"><a class="nav-link {% if request.path|slice:'6:' == '/blog/' %}active{% endif %}" href="{% url 'blog' %}">Blog</a></li>
                 <li class="nav-item"><a class="nav-link {% if request.path == '/contacto/' %}active{% endif %}" href="{% url 'contacto' %}">Contacto</a></li>
                 {% if request.user.is_authenticated %}
@@ -54,7 +67,8 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{% url 'perfil' %}">Mi perfil</a></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar Session</a></li>
+                            
                         </ul>
                     </li>
 

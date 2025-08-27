@@ -140,3 +140,43 @@ class CarritoItem(models.Model):
 
     def __str__(self):
         return f"{self.cantidad} x {self.articulo}"
+    
+
+# Tabla para registrar los pedidos/pagos
+class Pedido(models.Model):
+    ESTADOS = [
+    ('pendiente', 'Pendiente'),
+    ('pagado', 'Pagado'),
+    ('enviado', 'Enviado'),
+    ('cancelado', 'Cancelado'),
+    ]
+
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default="pendiente")
+    stripe_payment_id = models.CharField(max_length=100, blank=True, null=True)  # ID de Stripe
+
+    class Meta:
+        verbose_name = "Pedido"
+        verbose_name_plural = "Pedidos"
+
+    def __str__(self):
+        return f"Pedido #{self.id} - {self.usuario.user.username} - {self.estado}"
+
+
+# Tabla para registrar cada item de un pedido
+class PedidoItem(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="items")
+    articulo = models.ForeignKey(ArticuloVariante, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    precio = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+
+    def subtotal(self):
+        if self.precio is None:
+            return 0
+        return self.cantidad * self.precio
+    
+    def nombre_articulo(self):
+        return f"{self.articulo.articulo.nombre} - {self.articulo.color} - {self.articulo.talla}"
+    nombre_articulo.short_description = "Artículo"

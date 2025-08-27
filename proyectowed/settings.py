@@ -151,5 +151,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 
-STRIPE_PUBLIC_KEY = "pk_test_..."    # Clave pública de prueba
-STRIPE_SECRET_KEY = "sk_test_..."
+STRIPE_PUBLIC_KEY = "pk_test_51S0SeJFUtGs9N9UTKzTa1UoHbXs8lH5q4SNMG6BUTyQfMPPB3efivf5LbDAgxfOEMaFfNIl4poj5FoEnhiRhNwOq00tBv9GD0k"    # Clave pública de prueba
+STRIPE_SECRET_KEY = "sk_test_51S0SeJFUtGs9N9UTJ2gmbOVo4HvrIavnuKmOIdXLr3T3bYQpxIjo6jnyUMqzHY6YM9TQNeMxzQjJykBuPKRXNA5l00TEmM64xc"

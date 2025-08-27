@@ -2,7 +2,7 @@ from django.contrib import admin
 from app_wed.models import (
     Servicio, Categoria, Post, 
     CarritoItem, Carrito, 
-    Articulo, ArticuloVariante, Categoria_articulo
+    Articulo, ArticuloVariante, Categoria_articulo, PedidoItem, Pedido
 )
 
 # Servicio
@@ -44,8 +44,26 @@ class CarritoItemAdmin(admin.ModelAdmin):
     list_display = ('carrito', 'articulo', 'cantidad', 'subtotal')
     search_fields = ('articulo__articulo__nombre',)
 
+class PedidoItemInline(admin.TabularInline):
+    model = PedidoItem
+    extra = 0
+    readonly_fields = ('nombre_articulo', 'cantidad', 'precio', 'subtotal_display')
+
+    # Mostrar subtotal en readonly
+    def subtotal_display(self, obj):
+        return obj.subtotal()
+    subtotal_display.short_description = "Subtotal"
+
+
+class PedidoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'usuario', 'total', 'estado', 'fecha')
+    list_filter = ('estado', 'fecha')
+    search_fields = ('usuario__nombre', 'usuario__apellido')
+    inlines = [PedidoItemInline]
+
 
 # Registro en el panel de administración
+admin.site.register(Pedido, PedidoAdmin)
 admin.site.register(Servicio, ServicioAdmin)
 admin.site.register(Categoria, CategoriaAdmin)  # BLOG
 admin.site.register(Post, PostAdmin)            # BLOG

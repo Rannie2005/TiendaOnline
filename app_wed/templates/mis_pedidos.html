@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mis Pedidos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">🧾 Mis Pedidos</h2>
+
+    {% if pedidos %}
+        {% for pedido in pedidos %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Pedido #{{ pedido.id }} - {{ pedido.fecha|date:"d M Y H:i" }}</span>
+                <span class="badge 
+                    {% if pedido.estado == 'Pagado' %} bg-success
+                    {% elif pedido.estado == 'Pendiente' %} bg-warning
+                    {% else %} bg-danger {% endif %}">
+                    {{ pedido.estado }}
+                </span>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Artículo</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pedido.items.all %}
+                        <tr>
+                            <td>
+                                {% if item.articulo.imagen %}
+                                    <img src="{{ item.articulo.imagen.url }}" class="me-2" style="width:50px; height:50px; object-fit:cover;">
+                                {% else %}
+                                    <img src="{% static 'default.jpg' %}" class="me-2" style="width:50px; height:50px; object-fit:cover;">
+                                {% endif %}
+                                {{ item.articulo.articulo.nombre }} - {{ item.articulo.color }} - {{ item.articulo.talla }}
+                            </td>
+                            <td>{{ item.cantidad }}</td>
+                            <td>RD$ {{ item.precio }}</td>
+                            <td>RD$ {{ item.subtotal }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="fw-bold">
+                            <td colspan="3">Total del Pedido</td>
+                            <td>RD$ {{ pedido.total }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center">No tienes pedidos realizados aún 🛒</p>
+    {% endif %}
+</div>
+{% endblock %}

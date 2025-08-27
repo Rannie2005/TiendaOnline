@@ -26,6 +26,7 @@
             </h4>
 
             <!-- Formulario de selección de variante -->
+            {% if user.is_authenticated %}
             <form method="post" action="{% url 'agregar_al_carrito' %}" class="mb-4">
                 {% csrf_token %}
                 <div class="mb-3">
@@ -41,8 +42,15 @@
                         {% endfor %}
                     </select>
                 </div>
-                <button type="submit" class="btn btn-dark btn-lg w-100">🛒 Añadir al carrito</button>
+                <button type="submit" class="btn btn-dark btn-lg w-100">
+                    <i class="bi bi-cart-fill"></i> Añadir al carrito
+                </button>
             </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-box-arrow-in-right"></i> Inicia sesión para comprar
+                </a>
+            {% endif %}
         </div>
     </div>
 
@@ -64,7 +72,7 @@
                             RD$ {{ similar.precio_minimo }} - {{ similar.precio_maximo }}
                         </p>
                         <a href="{% url 'detalle_articulo' similar.id %}" class="btn btn-outline-dark btn-sm w-100">
-                            Ver detalles
+                            <i class="bi bi-eye-fill"></i> Ver detalles
                         </a>
                     </div>
                 </div>
@@ -80,9 +88,11 @@
     const selectorVariante = document.getElementById('variante');
     const imagenPrincipal = document.getElementById('imagen-principal');
 
-    selectorVariante.addEventListener('change', function() {
-        const imagenVariante = this.selectedOptions[0].dataset.imagen;
-        imagenPrincipal.src = imagenVariante;
-    });
+    if(selectorVariante){
+        selectorVariante.addEventListener('change', function() {
+            const imagenVariante = this.selectedOptions[0].dataset.imagen;
+            imagenPrincipal.src = imagenVariante;
+        });
+    }
 </script>
 {% endblock %}
