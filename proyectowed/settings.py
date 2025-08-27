@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-&(7zankmlm7))m_h&^!b4$%)4cid@n+j@9n63sho4ux=awk%*a
 DEBUG = False
 
 
-ALLOWED_HOSTS = ['rannie2005.pythonanywhere.com']
+ALLOWED_HOSTS = ['ranniel2005.pythonanywhere.com']
 os.environ['DJANGO_SETTINGS_MODULE'] = 'RMARKET.settings'
 
 
