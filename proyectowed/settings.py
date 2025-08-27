@@ -26,9 +26,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 SECRET_KEY = 'django-insecure-&(7zankmlm7))m_h&^!b4$%)4cid@n+j@9n63sho4ux=awk%*a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['rannie2005.pythonanywhere.com']
 
 
 # Application definition
@@ -144,6 +146,8 @@ EMAIL_HOST_PASSWORD = 'trml mlsx thec ukxh'
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
