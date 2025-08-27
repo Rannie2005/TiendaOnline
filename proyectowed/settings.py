@@ -30,7 +30,7 @@ DEBUG = False
 
 
 ALLOWED_HOSTS = ['ranniel2005.pythonanywhere.com']
-os.environ['DJANGO_SETTINGS_MODULE'] = 'RMARKET.settings'
+
 
 
 # Application definition
